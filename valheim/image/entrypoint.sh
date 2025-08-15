@@ -35,8 +35,20 @@ cd "${VALHEIM_DIR}"
 LOG_FILE="${LOG_DIR}/valheim.log"
 touch "$LOG_FILE"
 
+echo "[Valheim Entry] Directory contents:"
+ls -la .
+echo "[Valheim Entry] Looking for server executable..."
+if [ ! -f "./start_server_xvfb.sh" ]; then
+  echo "start_server_xvfb.sh not found, checking alternatives..."
+  find . -name "*server*" -o -name "*valheim*" | head -10
+  if [ -f "./valheim_server.x86_64" ]; then
+    echo "Using valheim_server.x86_64 instead"
+    exec ./valheim_server.x86_64 -name "${SERVER_NAME:-ValheimServer}" -port "${SERVER_PORT:-2456}" -world "${WORLD_NAME:-DedicatedWorld}" -public "${PUBLIC:-0}" -savedir "${DATA_DIR}/worlds" -logFile "$LOG_FILE"
+  fi
+  exit 12
+fi
 echo "[Valheim Entry] Starting Valheim server..."
-./valheim_server.x86_64 \
+./start_server_xvfb.sh \
   -name "${SERVER_NAME:-ValheimServer}" \
   -port "${SERVER_PORT:-2456}" \
   -world "${WORLD_NAME:-DedicatedWorld}" \
