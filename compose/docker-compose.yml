@@ -1,0 +1,68 @@
+version: "3.9"
+services:
+  valheim:
+    build: ../valheim/image
+    container_name: valheim
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: "Yuyamaru Server"
+      WORLD_NAME: "World01"
+      PUBLIC: "0" # 公開するなら 1
+      # PRESTART_BACKUP: "1"
+    volumes:
+      - ../valheim/data:/data
+    ports:
+      - "2456-2458:2456-2458/udp"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "grep -q 'Game server connected' /data/logs/valheim.log || exit 1",
+        ]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+
+  seven-days:
+    build: ../7d2d/image
+    container_name: seven-days
+    restart: unless-stopped
+    environment:
+      SDTD_SERVER_NAME: "Yuyamaru Server"
+      SDTD_PUBLIC: "false"
+      SDTD_MAX_PLAYERS: "12"
+      SDTD_GAME_WORLD: "Navezgane"
+      SDTD_GAME_NAME: "WorldA"
+      SDTD_PASSWORD: ""
+      AUTO_UPDATE: "1"
+    volumes:
+      - ../7d2d/data:/data
+    ports:
+      - "26900:26900/udp"
+      - "26900:26900/tcp"
+      - "26901:26901/udp"
+      - "26902:26902/udp"
+      - "26903:26903/udp"
+    healthcheck:
+      test: ["CMD-SHELL", "grep -q 'GamePref' /data/logs/latest.log || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 6
+      start_period: 180s
+
+  # 将来（Phase2）: ボットをここに追加
+  # valheim-bot:
+  #   image: your-registry/valheim-bot:latest
+  #   depends_on: [valheim]
+  #   volumes:
+  #     - ../valheim/data/logs:/logs/valheim:ro
+  # seven-days-bot:
+  #   image: your-registry/sdtd-bot:latest
+  #   depends_on: [seven-days]
+  #   volumes:
+  #     - ../7d2d/data/logs:/logs/sdtd:ro
+
+networks:
+  default:
+    name: games_net

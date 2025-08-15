@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ServerSettings>
+  <property name="ServerName" value="${SDTD_SERVER_NAME:-My7DaysServer}" />
+  <property name="ServerPort" value="${SDTD_SERVER_PORT:-26900}" />
+  <property name="GameWorld" value="${SDTD_GAME_WORLD:-Navezgane}" />
+  <property name="GameName" value="${SDTD_GAME_NAME:-MyWorld}" />
+  <property name="GameMode" value="${SDTD_GAME_MODE:-GameModeSurvival}" />
+  <property name="ServerIsPublic" value="${SDTD_PUBLIC:-false}" />
+  <property name="ServerMaxPlayerCount" value="${SDTD_MAX_PLAYERS:-12}" />
+  <property name="ServerPassword" value="${SDTD_PASSWORD:-}" />
+  <property name="TelnetEnabled" value="false" />
+  <property name="WebDashboardEnabled" value="false" />
+  <property name="SaveGameFolder" value="/data/saves" />
+  <property name="EACEnabled" value="${SDTD_EAC:-true}" />
+</ServerSettings>
