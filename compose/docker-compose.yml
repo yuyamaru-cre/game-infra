@@ -4,6 +4,7 @@ services:
     build: ../valheim/image
     container_name: valheim
     restart: unless-stopped
+    shm_size: "1g"
     environment:
       SERVER_NAME: "Yuyamaru Server"
       WORLD_NAME: "World01"
@@ -20,14 +21,15 @@ services:
           "grep -q 'Game server connected' /data/logs/valheim.log || exit 1",
         ]
       interval: 60s
-      timeout: 5s
-      retries: 5
-      start_period: 90s
+      timeout: 10s
+      retries: 8
+      start_period: 180s
 
   seven-days:
     build: ../7d2d/image
     container_name: seven-days
     restart: unless-stopped
+    shm_size: "1g"
     environment:
       SDTD_SERVER_NAME: "Yuyamaru Server"
       SDTD_PUBLIC: "false"
