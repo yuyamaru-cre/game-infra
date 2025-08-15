@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 ARG BEPINEX_VERSION=5.4.23.3
 ARG BEPINEX_FILENAME="BepInExPack_Valheim_${BEPINEX_VERSION}.zip"
-ARG BEPINEX_BASEURL="https://github.com/BepInEx/BepInEx/releases/download/v${BEPINEX_VERSION}/BepInEx_linux_x64_${BEPINEX_VERSION}.zip"
+ARG BEPINEX_BASEURL="https://github.com/BepInEx/BepInEx/releases/download/v${BEPINEX_VERSION}"
 ENV STEAMCMDDIR=/opt/steamcmd VALHEIM_DIR=/home/steam/valheim DATA_DIR=/data DOORSTOP_ENABLE=TRUE
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates lib32gcc-s1 curl tar jq unzip rsync procps tini && rm -rf /var/lib/apt/lists/*
 RUN useradd -m -d /home/steam -s /bin/bash steam
