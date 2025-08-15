@@ -41,9 +41,18 @@ echo "[Valheim Entry] Looking for server executable..."
 if [ ! -f "./start_server_xvfb.sh" ]; then
   echo "start_server_xvfb.sh not found, checking alternatives..."
   find . -name "*server*" -o -name "*valheim*" | head -10
-  if [ -f "./valheim_server.x86_64" ]; then
-    echo "Using valheim_server.x86_64 instead"
-    exec ./valheim_server.x86_64 -name "${SERVER_NAME:-ValheimServer}" -port "${SERVER_PORT:-2456}" -world "${WORLD_NAME:-DedicatedWorld}" -public "${PUBLIC:-0}" -savedir "${DATA_DIR}/worlds" -logFile "$LOG_FILE"
+  if [ -f "./start_server.sh" ]; then
+    echo "Using start_server.sh"
+    export SERVER_NAME="${SERVER_NAME:-ValheimServer}"
+    export SERVER_PORT="${SERVER_PORT:-2456}"
+    export WORLD_NAME="${WORLD_NAME:-DedicatedWorld}"
+    export PUBLIC="${PUBLIC:-0}"
+    export SERVER_SAVEDIR="${DATA_DIR}/worlds"
+    export SERVER_LOG_FILE="$LOG_FILE"
+    exec ./start_server.sh
+  elif [ -f "./valheim_server.x86_64" ]; then
+    echo "Using valheim_server.x86_64 with batchmode"
+    exec ./valheim_server.x86_64 -batchmode -nographics -name "${SERVER_NAME:-ValheimServer}" -port "${SERVER_PORT:-2456}" -world "${WORLD_NAME:-DedicatedWorld}" -public "${PUBLIC:-0}" -savedir "${DATA_DIR}/worlds" -logFile "$LOG_FILE"
   fi
   exit 12
 fi
