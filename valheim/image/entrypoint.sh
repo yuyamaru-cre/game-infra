@@ -26,28 +26,42 @@ link_dir "${VALHEIM_DIR}/BepInEx/config" "${DATA_DIR}/BepInEx/config"
 link_dir "${VALHEIM_DIR}/BepInEx/plugins" "${DATA_DIR}/BepInEx/plugins"
 
 if [ "${PRESTART_BACKUP:-1}" = "1" ]; then
-  tar czf "${DATA_DIR}/backups/prestart-$(date +%Y%m%d-%H%M%S).tgz" -C "${DATA_DIR}" worlds BepInEx/config >/dev/null 2>&1 || true
+  tar czf "${DATA_DIR}/backups/prestart-$(date +%Y%m%d-%H%M%S).tgz" -C "${DATA_DIR}" worlds BepInEx/config > /dev/null 2>&1 || true
 fi
 
 cd "${VALHEIM_DIR}"
+# Ensure Steam SDK64 client is discoverable
+mkdir -p "/home/steam/.steam/sdk64" || true
+if [ -f "${VALHEIM_DIR}/linux64/steamclient.so" ]; then
+  ln -sf "${VALHEIM_DIR}/linux64/steamclient.so" "/home/steam/.steam/sdk64/steamclient.so"
+fi
+# Library path for steamclient and natives
+export LD_LIBRARY_PATH="${VALHEIM_DIR}/linux64:${VALHEIM_DIR}:${LD_LIBRARY_PATH:-}"
+
 LOG_FILE="${LOG_DIR}/valheim.log"
 mkdir -p "$(dirname "$LOG_FILE")"
 touch "$LOG_FILE"
 
-# BepInEx ランナー必須
+# 実行権限の保険
+if [ -f "${VALHEIM_DIR}/run_bepinex.sh" ] && [ ! -x "${VALHEIM_DIR}/run_bepinex.sh" ]; then
+  chmod +x "${VALHEIM_DIR}/run_bepinex.sh" || true
+fi
+if [ -f "${VALHEIM_DIR}/valheim_server.x86_64" ] && [ ! -x "${VALHEIM_DIR}/valheim_server.x86_64" ]; then
+  chmod +x "${VALHEIM_DIR}/valheim_server.x86_64" || true
+fi
+
+# 必須ファイル確認
 if [ ! -x "./run_bepinex.sh" ]; then
   echo "Error: run_bepinex.sh not found or not executable in ${VALHEIM_DIR}" 1>&2
   ls -la
   exit 12
 fi
+if [ ! -x "./valheim_server.x86_64" ]; then
+  echo "Error: valheim_server.x86_64 not found or not executable in ${VALHEIM_DIR}" 1>&2
+  ls -la
+  exit 13
+fi
 
+# 起動（1行実行・BepInEx 経由・ヘッドレス）＋ tee でファイルにも出力
 echo "[Valheim Entry] Starting via BepInEx..."
-# 引数を透過し、標準出力もファイルへ tee で保存（healthcheck 用の grep も安定）
-exec bash -lc "./run_bepinex.sh ./valheim_server.x86_64 \
-  
-  -name '${SERVER_NAME:-ValheimServer}' \
-  -port '${SERVER_PORT:-2456}' \
-  -world '${WORLD_NAME:-DedicatedWorld}' \
-  -public '${PUBLIC:-0}' \
-  -savedir '${DATA_DIR}/worlds' \
-  -logFile '${LOG_FILE}' 2>&1 | tee -a '${LOG_FILE}'"
+exec bash -lc "/home/steam/valheim/run_bepinex.sh /home/steam/valheim/valheim_server.x86_64 -batchmode -nographics -name '${SERVER_NAME:-ValheimServer}' -port '${SERVER_PORT:-2456}' -world '${WORLD_NAME:-DedicatedWorld}' -public '${PUBLIC:-0}' -savedir '${DATA_DIR}/worlds' -logFile '${LOG_FILE}' 2>&1 | tee -a '${LOG_FILE}'"
