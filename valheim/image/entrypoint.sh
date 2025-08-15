@@ -38,9 +38,18 @@ fi
 # Library path for steamclient and natives
 export LD_LIBRARY_PATH="${VALHEIM_DIR}/linux64:${VALHEIM_DIR}:${LD_LIBRARY_PATH:-}"
 
-LOG_FILE="${LOG_DIR}/valheim.log"
-mkdir -p "$(dirname "$LOG_FILE")"
-touch "$LOG_FILE"
+# 日付付きログと latest リンクを準備
+TODAY="$(date +%Y%m%d)"
+LOG_DATED="${LOG_DIR}/valheim_${TODAY}.log"
+LOG_LATEST="${LOG_DIR}/valheim_latest.log"
+mkdir -p "${LOG_DIR}"
+# latest を当日ファイルへ向ける（当日初回起動時に新規作成）
+ln -sfn "$(basename "${LOG_DATED}")" "${LOG_LATEST}"
+# 7世代保持（valheim_*.log を新しい順に並べ、8本目以降削除）
+ls -1t ${LOG_DIR}/valheim_*.log 2>/dev/null | tail -n +8 | xargs -r rm -f || true
+
+LOG_FILE="${LOG_DATED}"
+: > "${LOG_FILE}"  # 明示的にファイルを作成（追記はValheim/tee側が行う)
 
 # PASSWORD があれば起動引数へ反映
 PASSWORD_ARG=""
