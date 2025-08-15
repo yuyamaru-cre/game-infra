@@ -43,7 +43,8 @@ fi
 
 echo "[Valheim Entry] Starting via BepInEx..."
 # 引数を透過し、標準出力もファイルへ tee で保存（healthcheck 用の grep も安定）
-exec bash -lc "./run_bepinex.sh \
+exec bash -lc "./run_bepinex.sh ./valheim_server.x86_64 \
+  
   -name '${SERVER_NAME:-ValheimServer}' \
   -port '${SERVER_PORT:-2456}' \
   -world '${WORLD_NAME:-DedicatedWorld}' \
