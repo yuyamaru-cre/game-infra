@@ -5,6 +5,9 @@ VALHEIM_DIR="${VALHEIM_DIR:-/home/steam/valheim}"
 DATA_DIR="/data"
 LOG_DIR="${DATA_DIR}/logs"
 
+# /dataディレクトリの権限修正
+sudo chown -R steam:steam "$DATA_DIR" 2>/dev/null || true
+
 mkdir -p "${DATA_DIR}/worlds" "${DATA_DIR}/BepInEx/plugins" "${DATA_DIR}/BepInEx/config" "${DATA_DIR}/backups" "${LOG_DIR}"
 
 [ -f "${VALHEIM_DIR}/libdoorstop.so" ] || { echo "Missing libdoorstop.so"; exit 10; }
