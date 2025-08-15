@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 ARG BEPINEX_VERSION=5.4.23.3
 ARG BEPINEX_FILENAME="BepInEx_linux_x64_${BEPINEX_VERSION}.zip"
 ARG BEPINEX_BASEURL="https://github.com/BepInEx/BepInEx/releases/download/v${BEPINEX_VERSION}"
