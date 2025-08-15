@@ -11,7 +11,7 @@ USER steam
 RUN curl -sSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar -xz -C $STEAMCMDDIR
 RUN mkdir -p $VALHEIM_DIR && $STEAMCMDDIR/steamcmd.sh +force_install_dir $VALHEIM_DIR +login anonymous +app_update 896660 validate +quit
 WORKDIR /tmp
-RUN curl -fSL -o ${BEPINEX_FILENAME} ${BEPINEX_BASEURL}/${BEPINEX_FILENAME} && unzip ${BEPINEX_FILENAME} -d /tmp/bep && rsync -a /tmp/bep/ $VALHEIM_DIR/ && test -f $VALHEIM_DIR/libdoorstop.so && test -f $VALHEIM_DIR/BepInEx/core/BepInEx.Preloader.dll && rm -rf /tmp/bep ${BEPINEX_FILENAME}
+RUN curl -fSL -o ${BEPINEX_FILENAME} ${BEPINEX_BASEURL}/${BEPINEX_FILENAME} && unzip ${BEPINEX_FILENAME} -d /tmp/bep && rsync -a /tmp/bep/ $VALHEIM_DIR/ && test -f $VALHEIM_DIR/libdoorstop.so && test -f $VALHEIM_DIR/BepInEx/core/BepInEx.Preloader.dll && chmod +x $VALHEIM_DIR/run_bepinex.sh || true && chmod -R +x $VALHEIM_DIR/docker || true && rm -rf /tmp/bep ${BEPINEX_FILENAME}
 COPY --chown=steam:steam entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 VOLUME ["/data"]
