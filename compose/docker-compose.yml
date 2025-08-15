@@ -5,11 +5,8 @@ services:
     container_name: valheim
     restart: unless-stopped
     shm_size: "1g"
-    environment:
-      SERVER_NAME: "Yuyamaru Server"
-      WORLD_NAME: "World01"
-      PUBLIC: "0" # 公開するなら 1
-      # PRESTART_BACKUP: "1"
+    env_file:
+      - ../env/valheim.env
     volumes:
       - ../valheim/data:/data
     ports:

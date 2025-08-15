@@ -42,6 +42,12 @@ LOG_FILE="${LOG_DIR}/valheim.log"
 mkdir -p "$(dirname "$LOG_FILE")"
 touch "$LOG_FILE"
 
+# PASSWORD があれば起動引数へ反映
+PASSWORD_ARG=""
+if [ -n "${PASSWORD:-}" ]; then
+  PASSWORD_ARG="-password '${PASSWORD}'"
+fi
+
 # 実行権限の保険
 if [ -f "${VALHEIM_DIR}/run_bepinex.sh" ] && [ ! -x "${VALHEIM_DIR}/run_bepinex.sh" ]; then
   chmod +x "${VALHEIM_DIR}/run_bepinex.sh" || true
@@ -64,4 +70,4 @@ fi
 
 # 起動（1行実行・BepInEx 経由・ヘッドレス）＋ tee でファイルにも出力
 echo "[Valheim Entry] Starting via BepInEx..."
-exec bash -lc "/home/steam/valheim/run_bepinex.sh /home/steam/valheim/valheim_server.x86_64 -batchmode -nographics -name '${SERVER_NAME:-ValheimServer}' -port '${SERVER_PORT:-2456}' -world '${WORLD_NAME:-DedicatedWorld}' -public '${PUBLIC:-0}' -savedir '${DATA_DIR}/worlds' -logFile '${LOG_FILE}' 2>&1 | tee -a '${LOG_FILE}'"
+exec bash -lc "/home/steam/valheim/run_bepinex.sh /home/steam/valheim/valheim_server.x86_64 -batchmode -nographics -name '${SERVER_NAME:-ValheimServer}' -port '${SERVER_PORT:-2456}' -world '${WORLD_NAME:-DedicatedWorld}' -public '${PUBLIC:-0}' ${PASSWORD_ARG} -savedir '${DATA_DIR}/worlds' -logFile '${LOG_FILE}' 2>&1 | tee -a '${LOG_FILE}'"
