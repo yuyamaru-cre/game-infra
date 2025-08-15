@@ -9,7 +9,7 @@ RUN echo "steam ALL=(ALL) NOPASSWD: /bin/chown" >> /etc/sudoers
 RUN mkdir -p $STEAMCMDDIR && chown steam:steam $STEAMCMDDIR
 USER steam
 RUN curl -sSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar -xz -C $STEAMCMDDIR
-RUN mkdir -p $VALHEIM_DIR && $STEAMCMDDIR/steamcmd.sh +login anonymous +app_update 896660 validate +quit
+RUN mkdir -p $VALHEIM_DIR && $STEAMCMDDIR/steamcmd.sh +force_install_dir $VALHEIM_DIR +login anonymous +app_update 896660 validate +quit
 WORKDIR /tmp
 RUN curl -fSL -o ${BEPINEX_FILENAME} ${BEPINEX_BASEURL}/${BEPINEX_FILENAME} && unzip ${BEPINEX_FILENAME} -d /tmp/bep && rsync -a /tmp/bep/ $VALHEIM_DIR/ && test -f $VALHEIM_DIR/libdoorstop.so && test -f $VALHEIM_DIR/BepInEx/core/BepInEx.Preloader.dll && rm -rf /tmp/bep ${BEPINEX_FILENAME}
 COPY --chown=steam:steam entrypoint.sh /entrypoint.sh
